@@ -30,12 +30,16 @@ import subprocess,re
 class NetworkCard:
     def __init__(self,info):
         self.info=info
-    # def split_value(self,split_str):
-    #     try:
-    #         res=re.split(split_str,self.value)[1].split()[0]
-    #     except:
-    #         res=None
-    #     return  None
+    def split_value(self,split_str):
+        try:
+            res=re.split(split_str,self.value)[1].split()[0]
+        except:
+            res=None
+        return  res
+    def get_ip(self,netcard_name):
+        return self.get_info()[netcard_name]['inet_addr']
+    def get_hwaddr(self,netcard_name):
+        return self.get_info()[netcard_name]['hw_addr']
     def get_info(self):
         network_card_info_dict = {}
         data_element=self.info.split("\n\n")
@@ -44,29 +48,23 @@ class NetworkCard:
             net_info_dict = {}
             if not self.value:
                 continue
-
             self.name=self.value.split()[0]
             if self.name == "lo":
                 continue
-            print(self.value)
-            hw_addr=re.findall('[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}',value)
-            print(hw_addr)
-            data1=re.findall('(\w|\s)+:[^:]]',value)
-            print(data1)
-            self.link_encap   =re.split(r'Link\s+encap:',self.value)[1].split()[0]
-            self.hw_addr      =re.split('HWaddr\s+',self.value)[1].split()[0]
-            self.inet_addr    =re.split('inet\s+addr:',self.value)[1].split()[0]
-            self.bcast        =re.split('Bcast:',self.value)[1].split()[0]
-            self.mask         =re.split('Mask:',self.value)[1].split()[0]
-            # self.inet6_addr   =re.split('inet6 addr:\s+',self.value)[1].split()[0]
-            # self.scope        =re.split('Scope:',self.value)[1].split()[0]
-            # self.scope = split_value(self, 'Scope:')
-            self.mtu          =re.split('MTU:',self.value)[1].split()[0]
-            self.metric       =re.split('Metric:',self.value)[1].split()[0]
-            self.rx_packets   =re.split('RX\s+packets:',self.value)[1].split()[0]
-            self.tx_packets   =re.split('TX\s+packets:',self.value)[1].split()[0]
-            self.rx_bytes     =re.split('RX\s+bytes:',self.value)[1].split()[0]
-            self.tx_bytes     =re.split('TX\s+bytes:',self.value)[1].split()[0]
+            # dic1={"link_encap":'Link\s+encap:',}
+            self.link_encap = NetworkCard.split_value(self,'Link\s+encap:')
+            self.hw_addr = NetworkCard.split_value(self,'HWaddr\s+')
+            self.inet_addr = NetworkCard.split_value(self,'inet\s+addr:')
+            self.bcast = NetworkCard.split_value(self,'Bcast:')
+            self.mask = NetworkCard.split_value(self, 'Mask:')
+            self.inet6_addr = NetworkCard.split_value(self,'inet6 addr:\s+')
+            self.scope = NetworkCard.split_value(self, 'Scope:')
+            self.mtu = NetworkCard.split_value(self, 'MTU:')
+            self.metric = NetworkCard.split_value(self, 'Metric:')
+            self.rx_packets=NetworkCard.split_value(self, 'RX\s+packets:')
+            self.tx_packets = NetworkCard.split_value(self,'TX\s+packets:')
+            self.rx_bytes = NetworkCard.split_value(self,'RX\s+bytes:')
+            self.tx_bytes = NetworkCard.split_value(self,'TX\s+bytes:')
             net_info_dict={
                             "name":self.name,
                             "link_encap":self.link_encap,
@@ -74,8 +72,8 @@ class NetworkCard:
                             "inet_addr":self.inet_addr,
                            "bcast":self.bcast,
                             "mask":self.mask,
-                           # "inet6_addr":self.inet6_addr,
-                           #  "scope":self.scope,
+                           "inet6_addr":self.inet6_addr,
+                            "scope":self.scope,
                            # "status":self.status,
                             "stu":self.mtu,
                            "metric":self.metric,
@@ -88,4 +86,6 @@ class NetworkCard:
         return network_card_info_dict
 network_card_obj=NetworkCard(info)
 network_play_info=network_card_obj.get_info()
-print(network_play_info)
+# print(network_play_info['eth0'])
+print(network_card_obj.get_ip('eth0'))
+print(network_card_obj.get_hwaddr('eth0'))
