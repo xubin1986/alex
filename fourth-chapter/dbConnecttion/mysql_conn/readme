@@ -1,0 +1,33 @@
+# python version: python3
+
+# Install requies:
+1. DBUtils
+    pip3 install DBUtils
+2. pymysql
+    pip3 install pymysql
+
+#Class Usage:
+1.Method One:
+    from mysql_conn import  MysqlConnPool
+    mysql_obj = MysqlConnPool(host='192.168.131.101', port=3306, user='root', password='password', db_name=None,mincached=0, maxcached=20)
+2.Method Two:
+    import mysql_conn
+    mysql_obj = mysql_conn.MysqlConnPool(host='192.168.131.101', port=3306, user='root', password='password', db_name=None,mincached=0, maxcached=20)
+
+#Sql Usage:
+    1. 单条插入，不带参数的
+    mysql_obj.insert("insert into test.test set value=14")
+    2. 使用带参数的函数插入单个字段，参数为元组和列表都可以
+    mysql_obj.insertMany("insert into test.test (id,value) values (%s,%s)", [(400,200),(401,201),(402,202)])
+    3. 不带参数update
+    mysql_obj.update("update test.test set value = 999 where id = 402")
+    4. 带参数update,%s有几个都可以加入到元组里面
+    mysql_obj.update("update test.test set value = %s", (888))
+    5. 删除操作，删除id为435的内容
+    mysql_obj.delete("delete from test.test where id = 435")
+    6. 执行完更新操作语句需要commit,使用end方法提交
+    mysql_obj.end()
+    7. 获取数据
+    mysql_obj.getAll("select * from test.test")
+    8. 释放连接池
+    mysql_obj.dispose()

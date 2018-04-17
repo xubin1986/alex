@@ -1,0 +1,6 @@
+[notdbMysql]
+host = 192.168.131.101
+port = 3306
+user = root
+password = Mysql_2018
+db_name = test
