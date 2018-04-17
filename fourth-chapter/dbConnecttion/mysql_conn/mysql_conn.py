@@ -164,26 +164,35 @@ if __name__ == '__main__':
     # print(mysql_obj)
     sqlAll = "select * from test.test;"
     mysql_obj.end()
-    print(mysql_obj)
+    # print(mysql_obj)
+    import time,hashlib,random
 
     #单条插入，不带参数的
-    mysql_obj.insert("insert into test.test set value=14")
+    num=random.randrange(0,10000)
+    num = 400
+    data=[]
+    for i in range(0,num):
+        data.append(hashlib.md5(str(time.time()+random.randrange(0,100)).encode("utf-8")).hexdigest())
+    old_time = time.time()
+    # mysql_obj.insert("insert into test.test set value=(%s)",data)
     #使用带参数的函数插入单个字段，参数为元组和列表都可以
-    mysql_obj.insertMany("insert into test.test (value) values (%s)",[22,33,44,55,66])
+    mysql_obj.insertMany("insert into test.test (value) values (%s)",data)
     #使用带参数的函数插入多个字段
     # mysql_obj.insertMany("insert into test.test (id,value) values (%s,%s)", ((400,200),(401,201),(402,202)))
     #使用的参数也可以采用列表
     # mysql_obj.insertMany("insert into test.test (id,value) values (%s,%s)", [(400,200),(401,201),(402,202)])
     #更正操作update不带参数
-    mysql_obj.update("update test.test set value = 999 where id = 402")
+    # mysql_obj.update("update test.test set value = 999 where id = 402")
     #更正操作update带参数,%s有几个都可以加入到元组里面
-    mysql_obj.update("update test.test set value = %s",(888))
+    # mysql_obj.update("update test.test set value = %s",(888))
     #删除操作
-    mysql_obj.delete("delete from test.test where id = 435")
+    # mysql_obj.delete("delete from test.test where id = 435")
     #提交更新操作
     mysql_obj.end()
+    new_time=time.time()
+    print("%ss" %(new_time-old_time))
     #获取所有结果
-    result = mysql_obj.getAll(sqlAll)
+    # result = mysql_obj.getAll(sqlAll)
     #获取首行结果
     # result = mysql_obj.getOne(sqlAll)
-    print(result)
+    # print(result)
