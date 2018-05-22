@@ -9,6 +9,19 @@ import pymysql,os
 from pymysql.cursors import DictCursor
 from DBUtils.PooledDB import PooledDB
 #MyPymysqlPool 基于pymysql模块和DButils的PooledDB
+class Mymeta(type):
+    def __init__(self, class_name, class_bases, class_dic):
+        super(Mymeta, self).__init__(class_name, class_bases, class_dic)
+        self.__instance=None
+    def __call__(self, *args, **kwargs):
+        if not self.__instance:
+            #1.创建一个空对象
+            self.__instance=object.__new__(self)
+            #2.实例化对象
+            self.__init__(self.__instance,*args,**kwargs)
+        #3.返回一个对象
+        return self.__instance
+
 class MysqlConnPool():
     _pool = None #连接池对象,类数据属性，已经在类中定义好了的，所有对象使用同一个
     def __init__(self,host,port,user,password,db_name=None,mincached=1,maxcached=20,*args,**kwargs):
